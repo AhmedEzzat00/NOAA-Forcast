@@ -75,10 +75,16 @@ public class MainActivity extends AppCompatActivity {
                     "Sat 6/28 - TRAPPED IN WEATHERSTATION - 23/18",
                     "Sun 6/29 - Sunny - 20/7"
             };
+
+            //we need a refenrenc to the root view because we cannot gain access
+            //to findViewById from static class
+            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             List<String> weekForecastList = new ArrayList<String>(Arrays.asList(weatherDummyData));
             ArrayAdapter<String> adapter = new ArrayAdapter<String>
                     (getActivity(), R.layout.list_item_forcast, R.id.list_item_forecast_textview, weekForecastList);
-            return inflater.inflate(R.layout.fragment_main, container, false);
+            ListView listView = rootView.findViewById(R.id.listview_forecast);
+            listView.setAdapter(adapter);
+            return rootView;
 
         }
     }
