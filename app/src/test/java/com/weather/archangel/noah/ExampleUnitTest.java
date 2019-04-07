@@ -1,4 +1,4 @@
-package com.weather.archangel.noaa;
+package com.weather.archangel.noah;
 
 import org.junit.Test;
 

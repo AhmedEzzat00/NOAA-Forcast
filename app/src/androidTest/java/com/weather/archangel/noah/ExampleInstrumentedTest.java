@@ -1,4 +1,4 @@
-package com.weather.archangel.noaa;
+package com.weather.archangel.noah;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
