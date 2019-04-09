@@ -1,20 +1,24 @@
 package com.weather.archangel.noah;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class ForecastFragment extends Fragment {
 
+    private static final String LOG_TAG = ForecastFragment.class.getName();
     public ForecastFragment() {
     }
 
@@ -22,7 +26,6 @@ public class ForecastFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        String baseUrl = "http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7";
         String[] weatherDummyData = {
                 "Mon 6/23 - Sunny - 31/17",
                 "Tue 6/24 - Foggy - 21/8",
@@ -41,15 +44,53 @@ public class ForecastFragment extends Fragment {
                 (getActivity(), R.layout.list_item_forcast, R.id.list_item_forecast_textview, weekForecastList);
         ListView listView = rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(adapter);
-        return rootView;
 
+        final String FORECAST_BASE_URL =
+                "http://api.openweathermap.org/data/2.5/forecast?";
+        String urlToSearch = buildURLAttributes(FORECAST_BASE_URL);
+        new AsyncWeather().execute(urlToSearch);
+        return rootView;
     }
 
-    public class AsyncWeather extends AsyncTask<String, Void, Void> {
+    private String buildURLAttributes(String baseURL) {
+
+        //placeholder data
+        String format = "json";
+        String units = "metric";
+        int numDays = 7;
+        int zipCode = 90430;
+
+
+        final String QUERY_PARAM = "q";
+        final String FORMAT_PARAM = "mode";
+        final String UNITS_PARAM = "units";
+        final String DAYS_PARAM = "cnt";
+        final String APPID_PARAM = "appid";
+        final String OPEN_WEATHER_MAP_API_KEY = "807f66eeba93d5b57e1f30dee477a57b";
+
+        Uri builtUri = Uri.parse(baseURL).buildUpon()
+                .appendQueryParameter(QUERY_PARAM, Integer.toString(zipCode))
+                .appendQueryParameter(APPID_PARAM, OPEN_WEATHER_MAP_API_KEY)
+                .appendQueryParameter(FORMAT_PARAM, format)
+                .appendQueryParameter(UNITS_PARAM, units)
+                .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
+                .build();
+
+        return builtUri.toString();
+    }
+
+    public static class AsyncWeather extends AsyncTask<String, Void, String[]> {
 
         @Override
-        protected Void doInBackground(String... urls) {
-            String jsonRespons = ForecastNetworkUtilities.fetchForecastData(urls[0]);
+        protected String[] doInBackground(String... urls) {
+            String[] forecastData = new String[1];
+            // Log.e("TESTTT",forecastData[0]);
+            try {
+                forecastData = ForecastNetworkUtilities.fetchForecastData(urls[0]);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Log.e(LOG_TAG, String.valueOf(forecastData.length));
             return null;
         }
     }
