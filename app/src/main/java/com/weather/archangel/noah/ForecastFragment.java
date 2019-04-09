@@ -1,5 +1,6 @@
 package com.weather.archangel.noah;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -50,6 +51,10 @@ public class ForecastFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 String forecastInfo = adapter.getItem(position);
+                //Launch the details activity with the forecast info
+                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                intent.putExtra(Intent.EXTRA_TEXT, forecastInfo);
+                startActivity(intent);
                 Toast.makeText(getActivity(), forecastInfo, Toast.LENGTH_SHORT).show();
             }
         });
