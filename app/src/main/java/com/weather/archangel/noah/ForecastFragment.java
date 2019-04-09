@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ForecastFragment extends Fragment {
-
+    ArrayAdapter<String> adapter = null;
     private static final String LOG_TAG = ForecastFragment.class.getName();
     public ForecastFragment() {
     }
@@ -40,7 +40,7 @@ public class ForecastFragment extends Fragment {
         //to findViewById from static class
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         List<String> weekForecastList = new ArrayList<>(Arrays.asList(weatherDummyData));
-        ArrayAdapter<String> adapter = new ArrayAdapter<>
+        adapter = new ArrayAdapter<>
                 (getActivity(), R.layout.list_item_forcast, R.id.list_item_forecast_textview, weekForecastList);
         ListView listView = rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(adapter);
@@ -79,7 +79,7 @@ public class ForecastFragment extends Fragment {
         return builtUri.toString();
     }
 
-    public static class AsyncWeather extends AsyncTask<String, Void, String[]> {
+    public class AsyncWeather extends AsyncTask<String, Void, String[]> {
 
         @Override
         protected String[] doInBackground(String... urls) {
@@ -91,7 +91,17 @@ public class ForecastFragment extends Fragment {
                 e.printStackTrace();
             }
             Log.e(LOG_TAG, String.valueOf(forecastData.length));
-            return null;
+            return forecastData;
+        }
+
+        @Override
+        protected void onPostExecute(String[] weatherData) {
+            if (weatherData != null && weatherData.length != 0) {
+                adapter.clear();
+                adapter.addAll(weatherData);
+                adapter.notifyDataSetChanged();
+            }
+
         }
     }
 }
