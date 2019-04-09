@@ -8,8 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import java.util.ArrayList;
@@ -44,6 +46,13 @@ public class ForecastFragment extends Fragment {
                 (getActivity(), R.layout.list_item_forcast, R.id.list_item_forecast_textview, weekForecastList);
         ListView listView = rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                String forecastInfo = adapter.getItem(position);
+                Toast.makeText(getActivity(), forecastInfo, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         final String FORECAST_BASE_URL =
                 "http://api.openweathermap.org/data/2.5/forecast?";
@@ -59,7 +68,6 @@ public class ForecastFragment extends Fragment {
         String units = "metric";
         int numDays = 7;
         int zipCode = 90430;
-
 
         final String QUERY_PARAM = "q";
         final String FORMAT_PARAM = "mode";
@@ -84,7 +92,6 @@ public class ForecastFragment extends Fragment {
         @Override
         protected String[] doInBackground(String... urls) {
             String[] forecastData = new String[1];
-            // Log.e("TESTTT",forecastData[0]);
             try {
                 forecastData = ForecastNetworkUtilities.fetchForecastData(urls[0]);
             } catch (JSONException e) {
