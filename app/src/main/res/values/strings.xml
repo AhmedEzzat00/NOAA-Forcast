@@ -4,6 +4,7 @@
     <string name="action_refresh">Refresh</string>
 
     <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_settings">Setting</string>
 
 
 </resources>

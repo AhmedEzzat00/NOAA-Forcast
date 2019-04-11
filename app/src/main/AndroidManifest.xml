@@ -14,9 +14,17 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
+            android:name=".SettingActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.weather.archangel.noah.MainActivity" />
+        </activity>
+        <activity
             android:name=".DetailsActivity"
-            android:parentActivityName=".MainActivity"
-            android:label="@string/title_activity_detail"></activity>
+            android:label="@string/title_activity_detail"
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
