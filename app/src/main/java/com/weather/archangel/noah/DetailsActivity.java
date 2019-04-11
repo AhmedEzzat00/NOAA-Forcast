@@ -4,10 +4,14 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,8 +51,13 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     public static class DetailsFragment extends Fragment {
+        private static final String LOG_TAG = DetailsFragment.class.getSimpleName();
+
+        private static final String FORECAST_SHARE_HASHTAG = " #NOAHForecastapp";
+        private String mForecastInfo;
 
         public DetailsFragment() {
+            setHasOptionsMenu(true);
         }
 
         @Nullable
@@ -58,9 +67,9 @@ public class DetailsActivity extends AppCompatActivity {
             Intent intent = getActivity().getIntent();
             View rootView = inflater.inflate(R.layout.details_fragment, container, false);
             if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-                String forecastInfo = intent.getStringExtra(intent.EXTRA_TEXT);
+                mForecastInfo = intent.getStringExtra(Intent.EXTRA_TEXT);
                 TextView textView = rootView.findViewById(R.id.message);
-                textView.setText(forecastInfo);
+                textView.setText(mForecastInfo);
             }
             return rootView;
         }
@@ -71,6 +80,35 @@ public class DetailsActivity extends AppCompatActivity {
 
         }
 
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+            inflater.inflate(R.menu.details_fragment, menu);
+            MenuItem menuItem = menu.findItem(R.id.action_share);
+
+            // Get the provider and hold onto it to set/change the share intent.
+            ShareActionProvider mShareActionProvider =
+                    (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+
+            // Attach an intent to this ShareActionProvider.  You can update this at any time,
+            // like when the user selects a new piece of data they might like to share.
+            if (mShareActionProvider != null) {
+                mShareActionProvider.setShareIntent(createShareForecastIntent());
+            } else {
+                Log.d(LOG_TAG, "Share Action Provider is null?");
+            }
+        }
+
+        public Intent createShareForecastIntent() {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            //this flag prevent the activity we are sharing to from being placed to
+            //the activity stack ,so u return to the app later when click on the icon
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            //inform android that we are sharing this type
+            shareIntent.setType("text/plain");
+            //creating and uploading the message
+            shareIntent.putExtra(Intent.EXTRA_TEXT, mForecastInfo + FORECAST_SHARE_HASHTAG);
+            return shareIntent;
+        }
     }
 
 

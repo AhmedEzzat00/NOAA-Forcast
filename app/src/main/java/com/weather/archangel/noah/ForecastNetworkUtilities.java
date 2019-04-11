@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-public class ForecastNetworkUtilities {
+class ForecastNetworkUtilities {
     private static final String LOG_TAG = ForecastNetworkUtilities.class.getName();
 
     /**
@@ -30,7 +30,7 @@ public class ForecastNetworkUtilities {
     private ForecastNetworkUtilities() {
     }
 
-    public static String[] fetchForecastData(String stringURL) throws JSONException {
+    static String[] fetchForecastData(String stringURL) throws JSONException {
         URL url = createURL(stringURL);
         String jsonResponse = "";
         try {
@@ -71,7 +71,7 @@ public class ForecastNetworkUtilities {
                 jsonResponse = readFromInputStream(inputStream);
             }
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error in Making a Connection ");
+            Log.e(LOG_TAG, "Error in Making a Connection ", e);
         } finally {
             if (inputStream != null)
                 inputStream.close();
@@ -127,7 +127,7 @@ public class ForecastNetworkUtilities {
     /**
      * Convert the time to the UTC time zone
      */
-    public static long normalizeDate(long startDate) {
+    private static long normalizeDate(long startDate) {
         // normalize the start date to the beginning of the (UTC) day
         GregorianCalendar date = (GregorianCalendar) GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"));
         date.setTime(new Date(startDate));
