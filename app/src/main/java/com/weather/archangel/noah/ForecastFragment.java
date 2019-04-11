@@ -18,8 +18,6 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class ForecastFragment extends Fragment {
     ArrayAdapter<String> adapter = null;
@@ -92,12 +90,10 @@ public class ForecastFragment extends Fragment {
     private String buildURLAttributes(String baseURL) {
 
         //placeholder data
-        String format = "json";
-        String units = "metric";
+
         int numDays = 7;
 
         final String QUERY_PARAM = "q";
-        final String FORMAT_PARAM = "mode";
         final String UNITS_PARAM = "units";
         final String DAYS_PARAM = "cnt";
         final String APPID_PARAM = "appid";
@@ -107,12 +103,13 @@ public class ForecastFragment extends Fragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String location = prefs.getString(getString(R.string.pref_location_key),
                 getString(R.string.pref_location_default));
+        String temperature_unit = prefs.getString(getString(R.string.pref_temperature_key),
+                getString(R.string.pref_temperature_celsius_value));
 
         Uri builtUri = Uri.parse(baseURL).buildUpon()
                 .appendQueryParameter(QUERY_PARAM, location)
                 .appendQueryParameter(APPID_PARAM, OPEN_WEATHER_MAP_API_KEY)
-                .appendQueryParameter(FORMAT_PARAM, format)
-                .appendQueryParameter(UNITS_PARAM, units)
+                .appendQueryParameter(UNITS_PARAM, temperature_unit)
                 .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
                 .build();
 

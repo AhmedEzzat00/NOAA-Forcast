@@ -5,9 +5,19 @@
 
     <string name="title_activity_detail">DetailActivity</string>
     <string name="title_activity_settings">Setting</string>
+
+    <!-- String data for the location parameter -->
     <string name="pref_location_label">Location</string>
     <string name="pref_location_key">location</string>
     <string name="pref_location_default">94043</string>
+
+    <!-- String data for the Temperature parameter -->
+    <string name="pref_temperature_label">Temperature Units</string>
+    <string name="pref_temperature_key">units</string>
+    <string name="pref_temperature_celsius_label">"\u2103"</string>
+    <string name="pref_temperature_fahrenheit_label">"\u2109"</string>
+    <string name="pref_temperature_celsius_value">metric"</string>
+    <string name="pref_temperature_fahrenheit_value">imperial"</string>
 
 
 </resources>

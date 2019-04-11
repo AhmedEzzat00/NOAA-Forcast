@@ -25,10 +25,10 @@ public class SettingActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
             Preference location = findPreference(getString(R.string.pref_location_key));
+            Preference tempUnit = findPreference(getString(R.string.pref_temperature_key));
             bindPreferenceSummaryToValue(location);
+            bindPreferenceSummaryToValue(tempUnit);
         }
-
-
         @Override
         public boolean onPreferenceChange(Preference preference, Object o) {
             //Cast the object to String Value
