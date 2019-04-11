@@ -1,9 +1,11 @@
 package com.weather.archangel.noah;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +23,8 @@ import java.util.List;
 
 public class ForecastFragment extends Fragment {
     ArrayAdapter<String> adapter = null;
+    final String FORECAST_BASE_URL =
+            "http://api.openweathermap.org/data/2.5/forecast?";
     private static final String LOG_TAG = ForecastFragment.class.getName();
     public ForecastFragment() {
     }
@@ -29,22 +33,11 @@ public class ForecastFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        String[] weatherDummyData = {
-                "Mon 6/23 - Sunny - 31/17",
-                "Tue 6/24 - Foggy - 21/8",
-                "Wed 6/25 - Cloudy - 22/17",
-                "Thurs 6/26 - Rainy - 18/11",
-                "Fri 6/27 - Foggy - 21/10",
-                "Sat 6/28 - TRAPPED IN WEATHERSTATION - 23/18",
-                "Sun 6/29 - Sunny - 20/7"
-        };
-
         //we need a reference to the root view because we cannot gain access
         //to findViewById from static class
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        List<String> weekForecastList = new ArrayList<>(Arrays.asList(weatherDummyData));
         adapter = new ArrayAdapter<>
-                (getActivity(), R.layout.list_item_forcast, R.id.list_item_forecast_textview, weekForecastList);
+                (getActivity(), R.layout.list_item_forcast, R.id.list_item_forecast_textview, new ArrayList<String>());
         ListView listView = rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -59,46 +52,25 @@ public class ForecastFragment extends Fragment {
             }
         });
 
-        final String FORECAST_BASE_URL =
-                "http://api.openweathermap.org/data/2.5/forecast?";
-        String urlToSearch = buildURLAttributes(FORECAST_BASE_URL);
-        new AsyncWeather().execute(urlToSearch);
+        new AsyncWeather().execute(FORECAST_BASE_URL);
         return rootView;
     }
 
-    private String buildURLAttributes(String baseURL) {
-
-        //placeholder data
-        String format = "json";
-        String units = "metric";
-        int numDays = 7;
-        int zipCode = 90430;
-
-        final String QUERY_PARAM = "q";
-        final String FORMAT_PARAM = "mode";
-        final String UNITS_PARAM = "units";
-        final String DAYS_PARAM = "cnt";
-        final String APPID_PARAM = "appid";
-        final String OPEN_WEATHER_MAP_API_KEY = "807f66eeba93d5b57e1f30dee477a57b";
-
-        Uri builtUri = Uri.parse(baseURL).buildUpon()
-                .appendQueryParameter(QUERY_PARAM, Integer.toString(zipCode))
-                .appendQueryParameter(APPID_PARAM, OPEN_WEATHER_MAP_API_KEY)
-                .appendQueryParameter(FORMAT_PARAM, format)
-                .appendQueryParameter(UNITS_PARAM, units)
-                .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
-                .build();
-
-        return builtUri.toString();
+    @Override
+    public void onStart() {
+        super.onStart();
+        Toast.makeText(getActivity(), "onStart", Toast.LENGTH_SHORT).show();
+        new AsyncWeather().execute(FORECAST_BASE_URL);
     }
 
     public class AsyncWeather extends AsyncTask<String, Void, String[]> {
 
         @Override
         protected String[] doInBackground(String... urls) {
+            String urlToSearch = buildURLAttributes(urls[0]);
             String[] forecastData = new String[1];
             try {
-                forecastData = ForecastNetworkUtilities.fetchForecastData(urls[0]);
+                forecastData = ForecastNetworkUtilities.fetchForecastData(urlToSearch);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -116,4 +88,35 @@ public class ForecastFragment extends Fragment {
 
         }
     }
+
+    private String buildURLAttributes(String baseURL) {
+
+        //placeholder data
+        String format = "json";
+        String units = "metric";
+        int numDays = 7;
+
+        final String QUERY_PARAM = "q";
+        final String FORMAT_PARAM = "mode";
+        final String UNITS_PARAM = "units";
+        final String DAYS_PARAM = "cnt";
+        final String APPID_PARAM = "appid";
+        final String OPEN_WEATHER_MAP_API_KEY = "807f66eeba93d5b57e1f30dee477a57b";
+
+        //Get and retrieve the data from XML/User
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = prefs.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+
+        Uri builtUri = Uri.parse(baseURL).buildUpon()
+                .appendQueryParameter(QUERY_PARAM, location)
+                .appendQueryParameter(APPID_PARAM, OPEN_WEATHER_MAP_API_KEY)
+                .appendQueryParameter(FORMAT_PARAM, format)
+                .appendQueryParameter(UNITS_PARAM, units)
+                .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
+                .build();
+
+        return builtUri.toString();
+    }
+
 }
