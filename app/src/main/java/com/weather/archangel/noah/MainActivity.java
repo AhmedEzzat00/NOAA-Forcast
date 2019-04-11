@@ -1,6 +1,8 @@
 package com.weather.archangel.noah;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -20,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.container, new ForecastFragment())
                     .commit();
         }
+
+
     }
 
     /**
@@ -43,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingActivity.class);
+            startActivity(intent);
             Toast.makeText(this, "Setting", Toast.LENGTH_SHORT).show();
             return true;
         } else if (id == R.id.action_refresh) {
